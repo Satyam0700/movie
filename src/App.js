@@ -1,22 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import MovieCard from './components/MovieCard'
-import searchIcon from './search.svg'
 import './App.css'
+import Chart from "./Chart"
 
-//2efeb9c2
-
-const API_URL = 'http://www.omdbapi.com?apikey=2efeb9c2';
+const API_URL = 'https://api.jikan.moe/v4/anime?q=1&limit=20';
 
 const App = () => {
 
-    const [movies, setMovies] = useState([]);
-    const [searchTerm, setSearchTerm] = useState('')   
+    const [anime, setAnime] = useState([]);
 
-    const searchMovies = async (title) => {
-        const response = await fetch(`${API_URL}&s=${title}`);
+    const searchMovies = async () => {
+        const response = await fetch(`${API_URL}`);
         const data = await response.json();
-
-        setMovies(data.Search);
+        setAnime(data.data);
     }
 
     useEffect(() => {
@@ -25,37 +21,28 @@ const App = () => {
 
 
     return (
-        <div className='app'>
-            <h1>Movie</h1>
+        <div >
+            <div className='app'>
+                <h1>AnimeLand</h1>
 
-            <div className='search'>
-                <input
-                    placeholder='Searhc for movies'
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    value={searchTerm}
-                />
-                <img src={searchIcon}
-                    alt="search"
-                    onClick={() => searchMovies(searchTerm)}
-                />
+                {
+                    anime?.length > 0
+                        ? (
+                            <div className='container'>
+                                {anime.map((movie) => (
+                                    <MovieCard movie={movie} />
+                                ))}
+                            </div>
+                        ) : (
+                            <div className='empty'>
+                                <h2>No movies found</h2>
+                            </div>
+                        )
+                }
             </div>
-
-            {
-                movies?.length > 0
-                    ? (
-                        <div className='container'>
-                            {movies.map((movie) => (
-                                <MovieCard movie={movie} />
-                            ))}
-                        </div>
-                    ) : (
-                        <div className='empty'>
-                            <h2>No movies found</h2>
-                        </div>
-                    )
-            }
-
+          <Chart />
         </div>
+
     )
 }
 
